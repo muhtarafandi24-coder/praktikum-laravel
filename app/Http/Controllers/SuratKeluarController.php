@@ -2,36 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OutgoingLetter;
+
 class SuratKeluarController extends Controller
 {
-    private function dataSurat(): array
-    {
-        return [
-            1 => [
-                'nomor_surat' => '001/FT/X/2026',
-                'tanggal' => '04-10-2026',
-                'tujuan' => 'BAA',
-                'perihal' => 'Pemberitahuan Akademik',
-            ],
-            2 => [
-                'nomor_surat' => '002/FT/X/2026',
-                'tanggal' => '05-10-2026',
-                'tujuan' => 'Dekanat',
-                'perihal' => 'Undangan Rapat',
-            ],
-            3 => [
-                'nomor_surat' => '003/FT/X/2026',
-                'tanggal' => '06-10-2026',
-                'tujuan' => 'LPPM',
-                'perihal' => 'Undangan Sosialisasi',
-            ],
-        ];
-    }
-
     // Menampilkan daftar surat keluar
     public function index()
     {
-        $suratKeluar = $this->dataSurat();
+        $suratKeluar = OutgoingLetter::all();
 
         return view('surat-keluar.index', [
             'suratKeluar' => $suratKeluar,
@@ -41,22 +19,15 @@ class SuratKeluarController extends Controller
     // Menampilkan detail surat keluar berdasarkan ID
     public function show($id)
     {
-        $suratKeluar = $this->dataSurat();
+        $surat = OutgoingLetter::find($id);
 
-        // Memeriksa apakah ID surat tersedia
-        if (!array_key_exists((int) $id, $suratKeluar)) {
-            return view('surat-keluar.show', [
-                'surat' => null,
-                'id' => (int) $id,
-            ]);
+        // Jika surat tidak ditemukan
+        if (!$surat) {
+            abort(404, 'Surat keluar tidak ditemukan.');
         }
-
-        // Mengambil data surat berdasarkan ID
-        $surat = $suratKeluar[(int) $id];
 
         return view('surat-keluar.show', [
             'surat' => $surat,
-            'id' => (int) $id,
         ]);
     }
 }
